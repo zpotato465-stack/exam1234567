@@ -1,18 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <title>Exam OS</title>
+
 <style>
 body {
+    margin: 0;
     background: black;
     color: white;
     font-family: Arial;
     text-align: center;
 }
 
+#container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 #timer {
     font-size: 50px;
-    margin-top: 20%;
+    margin-top: 20px;
 }
 
 .flash {
@@ -29,39 +39,53 @@ body {
 
 <body>
 
-<h1>Exam OS</h1>
-<div id="timer">Loading...</div>
+<div id="container">
+    <h1>Exam OS</h1>
+    <div id="timer">Loading...</div>
+</div>
 
 <audio id="lms" src="lms.mp3"></audio>
 <audio id="boom" src="flashbang.mp3"></audio>
 
 <script>
-let end = new Date();
-end.setMinutes(end.getMinutes() + 120);
+// 🎯 SET YOUR REAL EXAM DATE HERE
+let end = new Date("March 23, 2026 14:00:00");
 
 let lmsPlayed = false;
 let boomPlayed = false;
 
 function update() {
+
     let now = new Date();
     let diff = end - now;
 
-    let seconds = Math.floor(diff / 1000);
-
-    if (seconds <= 0 && !boomPlayed) {
+    if (diff <= 0 && !boomPlayed) {
         boomPlayed = true;
+
         document.body.classList.add("flash");
         document.getElementById("boom").play();
-        document.body.innerHTML = "<h1>FREEDOM UNLOCKED</h1>";
+
+        document.getElementById("container").innerHTML =
+            "<h1>💥 FREEDOM UNLOCKED 💥</h1>";
+
         return;
     }
 
-    if (seconds <= 110 && !lmsPlayed) {
+    let totalSeconds = Math.floor(diff / 1000);
+
+    let days = Math.floor(totalSeconds / 86400);
+    let hours = Math.floor((totalSeconds % 86400) / 3600);
+    let minutes = Math.floor((totalSeconds % 3600) / 60);
+    let seconds = totalSeconds % 60;
+
+    // 🎵 LMS at 1:50 remaining (110 seconds)
+    if (totalSeconds <= 110 && !lmsPlayed) {
         lmsPlayed = true;
         document.getElementById("lms").play();
     }
 
-    document.getElementById("timer").innerText = seconds + "s left";
+    document.getElementById("timer").innerHTML =
+        `${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
 setInterval(update, 1000);
